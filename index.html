@@ -490,57 +490,31 @@
       display: none !important;
     }
 
-    /* Core fix for mobile sizing */
-.echo-shell {
-  width: 100%;
-  max-width: 460px;     /* was 520px */
-  margin: 0 auto;
+    .echo-toggle-row {
+  display: flex;
+  gap: 4px;
+  justify-content: space-between;
+  font-size: 0.68rem;
 }
 
-/* Mobile tuning */
-@media (max-width: 600px) {
-  .echo-shell {
-    max-width: 100%;
-    padding: 18px 16px 16px;
-  }
-
-  .echo-title-block h1 {
-    font-size: 1.3rem;
-  }
-
-  .echo-title-block h2 {
-    font-size: 0.85rem;
-  }
-
-  .echo-symbol {
-    font-size: 3.4rem !important;     /* fixes tiny symbol */
-  }
-
-  .echo-stability-bar {
-    height: 14px;
-  }
-
-  .echo-btn-main {
-    font-size: 1.15rem;
-    padding: 14px;
-  }
-
-  .echo-toggle-btn {
-    font-size: 0.85rem;
-    padding: 6px 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .echo-toggle-row {
-    flex-wrap: wrap;              /* allow buttons to go to 2 lines */
-    row-gap: 6px;
-  }
-
-  .echo-toggle-btn {
-    flex: 1 1 calc(50% - 4px);    /* 2 buttons per row */
-    justify-content: center;
-  }
+.echo-toggle-btn {
+  flex: 1 1 0;       /* each button takes an equal share of row */
+  min-width: 0;      /* allow them to shrink instead of overflow */
+  border-radius: 999px;
+  border: 1px solid rgba(181, 255, 246, 0.5);
+  background: radial-gradient(circle at top, #22112d, #130817);
+  padding: 4px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  transition: box-shadow 0.1s ease, border-color 0.1s ease,
+              background 0.1s ease, color 0.1s ease, transform 0.06s ease;
 }
 
 
