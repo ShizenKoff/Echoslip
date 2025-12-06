@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EchoSlip - CAR-NOVA.i</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-deep: #0b0611;
+      --bg-mid: #1a0e24;
+      --bg-outer: #07040a;
+      --accent-pink: #ffb3e6;
+      --accent-mint: #b5fff6;
+      --accent-lilac: #d6c3ff;
+      --accent-peach: #ffd0b5;
+      --accent-red: #ff6b81;
+      --accent-green: #7dffb1;
+      --text-soft: #fff5ff;
+      --text-dim: #9a88b0;
+      --border-glow: 0 0 16px rgba(181, 255, 246, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, var(--bg-mid), var(--bg-deep))
+        fixed;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .echo-shell {
+      width: 100%;
+      max-width: 520px;
+      background: radial-gradient(circle at bottom, #20132b, #120918);
+      border-radius: 18px;
+      border: 1px solid rgba(181, 255, 246, 0.3);
+      box-shadow: var(--border-glow);
+      display: flex;
+      flex-direction: column;
+      padding: 12px 14px 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .echo-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      mix-blend-mode: soft-light;
+      opacity: 0.15;
+    }
+
+    header.echo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .echo-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .echo-title {
+      font-size: 1.1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-mint);
+    }
+
+    .echo-subtitle {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+    }
+
+    .echo-meta {
+      text-align: right;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .echo-meta span {
+      display: block;
+      line-height: 1.4;
+    }
+
+    main.echo-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .echo-sequence-window {
+      min-height: 90px;
+      border-radius: 12px;
+      border: 1px solid rgba(214, 195, 255, 0.5);
+      background: radial-gradient(circle at center, #24152f, #130918);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .echo-sequence-window::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(181, 255, 246, 0.3);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .echo-symbol {
+      font-size: 2.6rem;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .echo-symbol.fade-out {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+
+    .echo-status-text {
+      min-height: 40px;
+      padding: 4px 6px;
+      font-size: 0.78rem;
+      color: var(--accent-lilac);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .echo-stability-wrap {
+      margin-top: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .echo-stability-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .echo-stability-bar-outer {
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(181, 255, 246, 0.5);
+      background: linear-gradient(
+        to right,
+        rgba(181, 255, 246, 0.1),
+        rgba(255, 179, 230, 0.08)
+      );
+      overflow: hidden;
+    }
+
+    .echo-stability-bar-inner {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      border-radius: inherit;
+      background: linear-gradient(
+        to right,
+        var(--accent-red),
+        var(--accent-peach),
+        var(--accent-mint),
+        var(--accent-green)
+      );
+      transform-origin: left center;
+      transform: scaleX(1);
+      transition: transform 0.15s linear;
+    }
+
+    .echo-info-row {
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .echo-round-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .echo-round-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(214, 195, 255, 0.7);
+      background: transparent;
+      opacity: 0.4;
+    }
+
+    .echo-round-dot.active {
+      background: var(--accent-lilac);
+      opacity: 1;
+      box-shadow: 0 0 6px rgba(214, 195, 255, 0.8);
+    }
+
+    .echo-round-dot.done {
+      background: var(--accent-mint);
+      border-color: rgba(181, 255, 246, 0.9);
+      opacity: 1;
+      box-shadow: 0 0 6px rgba(181, 255, 246, 0.85);
+    }
+
+    .echo-resilience-wrap {
+      margin-top: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .echo-resilience-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .echo-resilience-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 22px;
+    }
+
+    .echo-resilience-bar {
+      flex: 1;
+      min-width: 6px;
+      border-radius: 99px;
+      background: rgba(214, 195, 255, 0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .echo-resilience-bar-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 99px;
+      background: linear-gradient(
+        to top,
+        var(--accent-mint),
+        var(--accent-lilac)
+      );
+      height: 0;
+      transition: height 0.2s ease;
+    }
+
+    .echo-resilience-bar.today .echo-resilience-bar-fill {
+      box-shadow: 0 0 8px rgba(181, 255, 246, 0.7);
+    }
+
+    .echo-resilience-bar.empty .echo-resilience-bar-fill {
+      background: rgba(214, 195, 255, 0.2);
+    }
+
+    footer.echo-footer {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .echo-toggle-row {
+      display: flex;
+      gap: 4px;
+      justify-content: space-between;
+      font-size: 0.68rem;
+    }
+
+    .echo-toggle-btn {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(181, 255, 246, 0.5);
+      background: radial-gradient(circle at top, #22112d, #130817);
+      padding: 4px 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      transition: box-shadow 0.1s ease, border-color 0.1s ease,
+        background 0.1s ease, color 0.1s ease, transform 0.06s ease;
+    }
+
+    .echo-toggle-btn span.icon {
+      font-size: 0.9rem;
+    }
+
+    .echo-toggle-btn.active {
+      border-color: var(--accent-mint);
+      color: var(--accent-mint);
+      box-shadow: 0 0 8px rgba(181, 255, 246, 0.6);
+      background: radial-gradient(circle at top, #2d1739, #120715);
+    }
+
+    .echo-toggle-btn:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: none;
+    }
+
+    .echo-button-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .echo-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(181, 255, 246, 0.7);
+      padding: 8px 10px;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: radial-gradient(circle at top, #281333, #150918);
+      color: var(--text-soft);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: transform 0.08s ease, box-shadow 0.1s ease,
+        border-color 0.1s ease, background 0.1s ease;
+    }
+
+    .echo-btn span.icon {
+      font-size: 1.1rem;
+    }
+
+    .echo-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(181, 255, 246, 0.5);
+      border-color: var(--accent-mint);
+    }
+
+    .echo-btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: none;
+    }
+
+    .echo-btn-true {
+      border-color: rgba(125, 255, 177, 0.8);
+    }
+
+    .echo-btn-slip {
+      border-color: rgba(255, 179, 230, 0.8);
+    }
+
+    .echo-btn-main {
+      margin-top: 2px;
+      width: 100%;
+    }
+
+    .echo-btn.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .echo-footer-meta {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .echo-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #1b1024ee, #070309f5);
+      backdrop-filter: blur(4px);
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+
+    .echo-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .echo-overlay-card {
+      width: 100%;
+      max-width: 360px;
+      border-radius: 16px;
+      border: 1px solid rgba(181, 255, 246, 0.6);
+      background: radial-gradient(circle at top, #261633, #120816);
+      padding: 14px 12px 10px;
+      text-align: center;
+      box-shadow: var(--border-glow);
+    }
+
+    .echo-overlay-title {
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent-mint);
+      margin-bottom: 4px;
+    }
+
+    .echo-overlay-body {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .echo-overlay-metrics {
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      text-align: left;
+      margin: 0 auto 8px;
+      max-width: 260px;
+      line-height: 1.5;
+    }
+
+    .echo-overlay-metrics span.key {
+      color: var(--accent-lilac);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.7rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 480px) {
+      .echo-title {
+        font-size: 1rem;
+      }
+      .echo-subtitle {
+        font-size: 0.68rem;
+      }
+      .echo-symbol {
+        font-size: 2.2rem;
+      }
+      .echo-btn {
+        font-size: 0.8rem;
+      }
+      .echo-toggle-btn {
+        font-size: 0.62rem;
+      }
+    }
+
+
+    .echo-session-log {
+  margin-top: 4px;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  max-height: 56px;
+  overflow-y: auto;
+  line-height: 1.4;
+  border-top: 1px solid rgba(181, 255, 246, 0.18);
+  padding-top: 3px;
+}
+
+.echo-session-log-entry {
+  white-space: nowrap;
+}
+
+  </style>
+</head>
+<body>
+  <div class="echo-shell" id="echo-root">
+    <header class="echo-header">
+      <div class="echo-title-block">
+        <div class="echo-title">EchOslip</div>
+        <div class="echo-subtitle">Car Nova Lab neural drill</div>
+      </div>
+      <div class="echo-meta">
+        <span>Session: <span id="echo-session-id">#0001</span></span>
+        <span>Mind score: <span id="echo-mind-score">0</span></span>
+        <span>Echo index: <span id="echo-daily-index">0</span></span>
+      </div>
+    </header>
+
+    <main class="echo-main">
+      <div class="echo-sequence-window">
+        <div class="echo-symbol" id="echo-symbol-display">◎</div>
+      </div>
+
+      <div class="echo-status-text" id="echo-status-text">
+        Tap "Start session" to begin. Watch the sequence, then judge each echo.
+      </div>
+
+      <div class="echo-stability-wrap">
+        <div class="echo-stability-label-row">
+          <span>Echo stability</span>
+          <span id="echo-stability-label">100%</span>
+        </div>
+        <div class="echo-stability-bar-outer">
+          <div
+            class="echo-stability-bar-inner"
+            id="echo-stability-inner"
+          ></div>
+        </div>
+      </div>
+
+      <div class="echo-info-row">
+        <div>Timer: <span id="echo-timer-display">00.0s</span></div>
+        <div class="echo-round-dots" id="echo-round-dots"></div>
+      </div>
+
+      <div class="echo-resilience-wrap">
+  <div class="echo-resilience-label-row">
+    <span>Last 7 days</span>
+    <span id="echo-resilience-label">no history</span>
+  </div>
+  <div class="echo-resilience-bars" id="echo-resilience-bars"></div>
+</div>
+
+    <div class="echo-session-log" id="echo-session-log">
+  No stored sessions yet.
+</div>
+    </main>
+
+    <footer class="echo-footer">
+      <div class="echo-toggle-row">
+        <button class="echo-toggle-btn" id="toggle-sound" type="button">
+          <span class="icon">♪</span>
+          <span>Sound</span>
+        </button>
+        <button class="echo-toggle-btn" id="toggle-voice" type="button">
+          <span class="icon">🗣</span>
+          <span>Voice</span>
+        </button>
+        <button class="echo-toggle-btn" id="toggle-hard" type="button">
+          <span class="icon">⚡</span>
+          <span>Mode</span>
+        </button>
+        <button class="echo-toggle-btn" id="toggle-size" type="button">
+    <span class="icon">⬒</span>
+    <span>Size</span>
+  </button>
+      </div>
+
+      <div class="echo-button-row">
+        <button
+          class="echo-btn echo-btn-true disabled"
+          id="echo-btn-true"
+          type="button"
+        >
+          <span class="icon">✔</span>
+          <span>True</span>
+        </button>
+        <button
+          class="echo-btn echo-btn-slip disabled"
+          id="echo-btn-slip"
+          type="button"
+        >
+          <span class="icon">✧</span>
+          <span>Slip</span>
+        </button>
+      </div>
+
+      <button
+        class="echo-btn echo-btn-main"
+        id="echo-btn-main"
+        type="button"
+      >
+        Start session
+      </button>
+
+      <div class="echo-footer-meta">
+        Crafted by CAR-NOVA.i for five minute memory drills
+      </div>
+    </footer>
+
+    <div class="echo-overlay" id="echo-overlay">
+      <div class="echo-overlay-card">
+        <div class="echo-overlay-title" id="overlay-title">
+          Round summary
+        </div>
+        <div class="echo-overlay-body" id="overlay-body">
+          Good work. Your echo held longer than expected.
+        </div>
+        <div class="echo-overlay-metrics" id="overlay-metrics">
+          <div><span class="key">Correct:</span> <span id="ov-correct">0</span></div>
+          <div><span class="key">Slips caught:</span> <span id="ov-slips">0</span></div>
+          <div><span class="key">Accuracy:</span> <span id="ov-accuracy">0%</span></div>
+          <div><span class="key">Round time:</span> <span id="ov-time">0.0s</span></div>
+        </div>
+        <button class="echo-btn echo-btn-main" id="overlay-btn" type="button">
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ECHO_CONFIG = {
+      rounds: [
+        { seqLength: 3, label: "Warm echo" },
+        { seqLength: 5, label: "Fading echo" },
+        { seqLength: 7, label: "Critical echo" },
+      ],
+      sequenceShowMs: 900,
+      sequenceGapMs: 220,
+      stabilityMax: 100,
+      baseStabilityDrainPerSecond: 5,
+      stabilityGainCorrect: 6,
+      stabilityPenaltyWrong: 16,
+      scorePerCorrect: 3,
+      scorePerPerfectRound: 25,
+      difficultyMin: 1,
+      difficultyMax: 5,
+      difficultyUpThreshold: 0.88,
+      difficultyDownThreshold: 0.6,
+      difficultyWindowRounds: 4,
+      storageKeys: {
+        history: "ECHOSLIP_HISTORY_V1",
+        difficulty: "ECHOSLIP_DIFFICULTY_V1",
+        sessionCounter: "ECHOSLIP_SESSION_COUNTER_V1",
+        sound: "ECHOSLIP_SOUND_V1",
+        voice: "ECHOSLIP_VOICE_V1",
+        hardMode: "ECHOSLIP_HARDMODE_V1",
+      },
+    };
+
+    const SYMBOL_POOL = [
+      { char: "◆", name: "diamond" },
+      { char: "●", name: "circle" },
+      { char: "■", name: "square" },
+      { char: "▲", name: "triangle" },
+      { char: "★", name: "star" },
+      { char: "✚", name: "plus" },
+      { char: "✺", name: "burst" },
+    ];
+
+    const SYMBOL_COLORS = [
+      "#06DE04",
+      "#F8FF2B",
+      "#0401FF",
+      "#FF14D3",
+      "#820F9E",
+    ];
+
+    const PHASE = {
+      IDLE: "idle",
+      SHOW_SEQUENCE: "show_sequence",
+      TEST: "test",
+      BETWEEN_ROUNDS: "between_rounds",
+      DONE: "done",
+    };
+
+    const echoState = {
+      sessionId: 1,
+      phase: PHASE.IDLE,
+      roundIndex: 0,
+      roundsMeta: [],
+      sequence: [],
+      testItems: [],
+      testIndex: 0,
+      stability: ECHO_CONFIG.stabilityMax,
+      stabilityTimerId: null,
+      lastStabilityTickTs: null,
+      roundStartTs: null,
+      totalStartTs: null,
+      totalCorrect: 0,
+      totalAnswers: 0,
+      totalSlipsCaught: 0,
+      mindScore: 0,
+      difficultyLevel: 1,
+      soundEnabled: true,
+      voiceEnabled: true,
+      hardMode: false,
+      historyByDate: {},
+      paused : false,
+      sizeDistort: false,
+    };
+
+    let audioContext = null;
+
+    const dom = {
+      root: document.getElementById("echo-root"),
+      symbolDisplay: document.getElementById("echo-symbol-display"),
+      statusText: document.getElementById("echo-status-text"),
+      stabilityLabel: document.getElementById("echo-stability-label"),
+      stabilityInner: document.getElementById("echo-stability-inner"),
+      timerDisplay: document.getElementById("echo-timer-display"),
+      roundDotsContainer: document.getElementById("echo-round-dots"),
+      btnTrue: document.getElementById("echo-btn-true"),
+      btnSlip: document.getElementById("echo-btn-slip"),
+      btnMain: document.getElementById("echo-btn-main"),
+      sessionIdLabel: document.getElementById("echo-session-id"),
+      mindScoreLabel: document.getElementById("echo-mind-score"),
+      dailyIndexLabel: document.getElementById("echo-daily-index"),
+      overlay: document.getElementById("echo-overlay"),
+      overlayTitle: document.getElementById("overlay-title"),
+      overlayBody: document.getElementById("overlay-body"),
+      overlayBtn: document.getElementById("overlay-btn"),
+      ovCorrect: document.getElementById("ov-correct"),
+      ovSlips: document.getElementById("ov-slips"),
+      ovAccuracy: document.getElementById("ov-accuracy"),
+      ovTime: document.getElementById("ov-time"),
+      resilienceBars: document.getElementById("echo-resilience-bars"),
+      resilienceLabel: document.getElementById("echo-resilience-label"),
+      toggleSound: document.getElementById("toggle-sound"),
+      toggleVoice: document.getElementById("toggle-voice"),
+      toggleHard: document.getElementById("toggle-hard"),
+      toggleSize: document.getElementById("toggle-size"),
+      sessionLog: document.getElementById("echo-session-log"),
+
+    };
+
+    function initEchoSlip() {
+      loadPersistentState();
+      buildRoundDots();
+      buildResilienceBarsSkeleton();
+
+      dom.btnTrue.addEventListener("click", () => handleAnswer(true));
+      dom.btnSlip.addEventListener("click", () => handleAnswer(false));
+      dom.btnMain.addEventListener("click", handleMainButton);
+      dom.overlayBtn.addEventListener("click", handleOverlayButton);
+
+      dom.toggleSound.addEventListener("click", handleToggleSound);
+      dom.toggleVoice.addEventListener("click", handleToggleVoice);
+      dom.toggleHard.addEventListener("click", handleToggleHard);
+      dom.toggleSize.addEventListener("click", handleToggleSize);
+
+      updateSessionLabel();
+      updateMindScoreLabel();
+      updateDailyIndexLabel();
+      updateStabilityVisual();
+      updateTimer(0);
+      updateRoundDots();
+      updateResilienceBars();
+      updateToggleVisuals();
+
+      setPhase(PHASE.IDLE);
+      echoState.totalStartTs = performance.now();
+    }
+
+    function loadPersistentState() {
+      try {
+        const savedCounter = localStorage.getItem(
+          ECHO_CONFIG.storageKeys.sessionCounter
+        );
+        if (savedCounter) {
+          echoState.sessionId = parseInt(savedCounter, 10) || 1;
+        }
+      } catch (e) {
+        echoState.sessionId = 1;
+      }
+
+      try {
+        const savedDiff = localStorage.getItem(
+          ECHO_CONFIG.storageKeys.difficulty
+        );
+        if (savedDiff) {
+          const parsed = parseInt(savedDiff, 10);
+          if (!Number.isNaN(parsed)) {
+            echoState.difficultyLevel = clamp(
+              parsed,
+              ECHO_CONFIG.difficultyMin,
+              ECHO_CONFIG.difficultyMax
+            );
+          }
+        }
+      } catch (e) {}
+
+      try {
+        const raw = localStorage.getItem(ECHO_CONFIG.storageKeys.history);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            echoState.historyByDate = parsed;
+          }
+        }
+      } catch (e) {
+        echoState.historyByDate = {};
+      }
+
+      try {
+        const s = localStorage.getItem(ECHO_CONFIG.storageKeys.sound);
+        if (s != null) {
+          echoState.soundEnabled = s === "1";
+        }
+        const v = localStorage.getItem(ECHO_CONFIG.storageKeys.voice);
+        if (v != null) {
+          echoState.voiceEnabled = v === "1";
+        }
+        const h = localStorage.getItem(ECHO_CONFIG.storageKeys.hardMode);
+        if (h != null) {
+          echoState.hardMode = h === "1";
+        }
+      } catch (e) {}
+    }
+
+    function saveSessionCounter() {
+      try {
+        localStorage.setItem(
+          ECHO_CONFIG.storageKeys.sessionCounter,
+          String(echoState.sessionId)
+        );
+      } catch (e) {}
+    }
+
+    function saveDifficulty() {
+      try {
+        localStorage.setItem(
+          ECHO_CONFIG.storageKeys.difficulty,
+          String(echoState.difficultyLevel)
+        );
+      } catch (e) {}
+    }
+
+    function saveHistory() {
+      try {
+        localStorage.setItem(
+          ECHO_CONFIG.storageKeys.history,
+          JSON.stringify(echoState.historyByDate)
+        );
+      } catch (e) {}
+    }
+
+    function saveToggles() {
+      try {
+        localStorage.setItem(
+          ECHO_CONFIG.storageKeys.sound,
+          echoState.soundEnabled ? "1" : "0"
+        );
+        localStorage.setItem(
+          ECHO_CONFIG.storageKeys.voice,
+          echoState.voiceEnabled ? "1" : "0"
+        );
+        localStorage.setItem(
+          ECHO_CONFIG.storageKeys.hardMode,
+          echoState.hardMode ? "1" : "0"
+        );
+      } catch (e) {}
+    }
+
+    function buildRoundDots() {
+      dom.roundDotsContainer.innerHTML = "";
+      ECHO_CONFIG.rounds.forEach((round, index) => {
+        const dot = document.createElement("div");
+        dot.className = "echo-round-dot";
+        dot.dataset.index = String(index);
+        dom.roundDotsContainer.appendChild(dot);
+      });
+    }
+
+    function buildResilienceBarsSkeleton() {
+      dom.resilienceBars.innerHTML = "";
+      for (let i = 0; i < 7; i++) {
+        const bar = document.createElement("div");
+        bar.className = "echo-resilience-bar empty";
+        const fill = document.createElement("div");
+        fill.className = "echo-resilience-bar-fill";
+        bar.appendChild(fill);
+        dom.resilienceBars.appendChild(bar);
+      }
+    }
+
+    function setPhase(nextPhase) {
+        echoState.paused = false;
+        echoState.phase = nextPhase;
+      
+
+      switch (nextPhase) {
+        case PHASE.IDLE:
+          setStatus("Tap \"Start session\" then watch the pattern carefully.");
+          setMainButtonLabel("Start session");
+          setAnswerButtonsEnabled(false);
+          setMainButtonEnabled(true);
+          break;
+        case PHASE.SHOW_SEQUENCE:
+          setStatus("Observe each symbol and color in order.");
+          setMainButtonLabel("Sequence running");
+          setMainButtonEnabled(false);
+          setAnswerButtonsEnabled(false);
+          break;
+        case PHASE.TEST:
+          setStatus("Judge each echo. True for exact match, Slip for any change.");
+          setMainButtonLabel("Pause");
+          setMainButtonEnabled(true);
+          setAnswerButtonsEnabled(true);
+          break;
+        case PHASE.BETWEEN_ROUNDS:
+          setStatus("Round complete. Continue or wrap up.");
+          setMainButtonLabel("Continue to next round");
+          setMainButtonEnabled(true);
+          setAnswerButtonsEnabled(false);
+          break;
+        case PHASE.DONE:
+          setStatus("Session complete. Start again when you are ready.");
+          setMainButtonLabel("Run another session");
+          setMainButtonEnabled(true);
+          setAnswerButtonsEnabled(false);
+          break;
+      }
+    }
+
+    function setStatus(message) {
+      dom.statusText.textContent = message;
+    }
+
+    function setMainButtonLabel(label) {
+      dom.btnMain.textContent = label;
+    }
+
+    function setMainButtonEnabled(enabled) {
+      if (enabled) {
+        dom.btnMain.classList.remove("disabled");
+      } else {
+        dom.btnMain.classList.add("disabled");
+      }
+      dom.btnMain.disabled = !enabled;
+    }
+
+    function setAnswerButtonsEnabled(enabled) {
+      const method = enabled ? "remove" : "add";
+      dom.btnTrue.classList[method]("disabled");
+      dom.btnSlip.classList[method]("disabled");
+      dom.btnTrue.disabled = !enabled;
+      dom.btnSlip.disabled = !enabled;
+    }
+
+    function updateSessionLabel() {
+      const padded = String(echoState.sessionId).padStart(4, "0");
+      dom.sessionIdLabel.textContent = "#" + padded;
+    }
+
+    function updateMindScoreLabel() {
+      dom.mindScoreLabel.textContent = String(echoState.mindScore);
+    }
+
+    function updateDailyIndexLabel() {
+      const today = getTodayIso();
+      const entry = echoState.historyByDate[today];
+      if (!entry || !entry.totalAnswers) {
+        dom.dailyIndexLabel.textContent = "0";
+        return;
+      }
+      const avgAcc = entry.totalCorrect / entry.totalAnswers;
+      const score = Math.round(avgAcc * 100);
+      dom.dailyIndexLabel.textContent = String(score);
+    }
+
+    function updateRoundDots() {
+      const dots = dom.roundDotsContainer.querySelectorAll(".echo-round-dot");
+      dots.forEach((dot, index) => {
+        dot.classList.remove("active", "done");
+        if (index < echoState.roundIndex) {
+          dot.classList.add("done");
+        } else if (index === echoState.roundIndex) {
+          dot.classList.add("active");
+        }
+      });
+    }
+
+    function updateStabilityVisual() {
+      const pct =
+        Math.max(0, Math.min(1, echoState.stability / ECHO_CONFIG.stabilityMax)) *
+        100;
+      dom.stabilityLabel.textContent = Math.round(pct) + "%";
+      const scaleX = Math.max(0.02, pct / 100);
+      dom.stabilityInner.style.transform = `scaleX(${scaleX})`;
+    }
+
+    function updateTimer(elapsedMs) {
+      const seconds = elapsedMs / 1000;
+      dom.timerDisplay.textContent = seconds.toFixed(1) + "s";
+    }
+
+    function showSymbol(symbol) {
+  const el = dom.symbolDisplay;
+  el.classList.remove("fade-out");
+  el.textContent = symbol.char;
+  el.style.color = symbol.color;
+
+  if (echoState.sizeDistort) {
+    // Base size from CSS is 2.6rem — use that as reference
+    const baseRem = 2.6;
+    // Random factor between 0.75x and 1.6x
+    const factor = 0.75 + Math.random() * 0.85;
+    el.style.fontSize = (baseRem * factor).toFixed(2) + "rem";
+  } else {
+    // Let CSS control it when distortion is off
+    el.style.fontSize = "";
+  }
+}
+
+
+    function updateToggleVisuals() {
+  if (echoState.soundEnabled) {
+    dom.toggleSound.classList.add("active");
+  } else {
+    dom.toggleSound.classList.remove("active");
+  }
+
+  if (echoState.voiceEnabled) {
+    dom.toggleVoice.classList.add("active");
+  } else {
+    dom.toggleVoice.classList.remove("active");
+  }
+
+  if (echoState.hardMode) {
+    dom.toggleHard.classList.add("active");
+    dom.toggleHard.querySelector("span:last-child").textContent = "Hard";
+  } else {
+    dom.toggleHard.classList.remove("active");
+    dom.toggleHard.querySelector("span:last-child").textContent = "Adaptive";
+  }
+
+  // New: size distort
+  if (echoState.sizeDistort) {
+    dom.toggleSize.classList.add("active");
+  } else {
+    dom.toggleSize.classList.remove("active");
+  }
+}
+
+
+    function handleMainButton() {
+  if (echoState.phase === PHASE.IDLE || echoState.phase === PHASE.DONE) {
+    startNewSession();
+  } else if (echoState.phase === PHASE.BETWEEN_ROUNDS) {
+    continueToNextRound();
+  } else if (echoState.phase === PHASE.TEST) {
+    togglePause();
+  }
+}
+
+    function togglePause() {
+  if (echoState.phase !== PHASE.TEST) return;
+
+  if (!echoState.paused) {
+    // going into pause
+    echoState.paused = true;
+    clearStabilityTimer();
+    setAnswerButtonsEnabled(false);
+    setMainButtonLabel("Resume");
+    setStatus("Paused. Tap Resume to continue this echo.");
+  } else {
+    // resuming
+    echoState.paused = false;
+    setAnswerButtonsEnabled(true);
+    setMainButtonLabel("Pause");
+    setStatus("Judge each echo. True for exact match, Slip for any change.");
+    echoState.lastStabilityTickTs = performance.now();
+    echoState.stabilityTimerId = requestAnimationFrame(stabilityTick);
+  }
+}
+
+
+    function startNewSession() {
+      echoState.sessionId += 1;
+      saveSessionCounter();
+
+      echoState.roundIndex = 0;
+      echoState.roundsMeta = [];
+      echoState.totalCorrect = 0;
+      echoState.totalAnswers = 0;
+      echoState.totalSlipsCaught = 0;
+      echoState.mindScore = 0;
+
+      updateMindScoreLabel();
+      updateSessionLabel();
+      updateRoundDots();
+
+      echoState.totalStartTs = performance.now();
+      setPhase(PHASE.SHOW_SEQUENCE);
+      startRound();
+    }
+
+    function startRound() {
+      clearStabilityTimer();
+
+      const config =
+        ECHO_CONFIG.rounds[echoState.roundIndex] ||
+        ECHO_CONFIG.rounds[ECHO_CONFIG.rounds.length - 1];
+
+      echoState.sequence = generateSequence(config.seqLength);
+      echoState.testItems = [];
+      echoState.testIndex = 0;
+      echoState.stability = ECHO_CONFIG.stabilityMax;
+      echoState.lastStabilityTickTs = null;
+
+      updateStabilityVisual();
+      updateTimer(0);
+
+      echoState.roundStartTs = performance.now();
+      setPhase(PHASE.SHOW_SEQUENCE);
+
+      playSequence(() => {
+        echoState.testItems = buildTestItems(echoState.sequence);
+        echoState.testIndex = 0;
+        if (!echoState.testItems.length) {
+          endRound("no_test_items");
+          return;
+        }
+        setPhase(PHASE.TEST);
+        startStabilityTimer();
+        showCurrentTestItem();
+      });
+    }
+
+    function continueToNextRound() {
+      const nextIndex = echoState.roundIndex + 1;
+      if (nextIndex >= ECHO_CONFIG.rounds.length) {
+        showSessionSummaryOverlay();
+        setPhase(PHASE.DONE);
+        return;
+      }
+
+      echoState.roundIndex = nextIndex;
+      updateRoundDots();
+      startRound();
+    }
+
+    function endRound(reason) {
+      clearStabilityTimer();
+
+      const now = performance.now();
+      const elapsed = echoState.roundStartTs
+        ? now - echoState.roundStartTs
+        : 0;
+
+      const roundAnswers = echoState.testItems.length;
+      const roundCorrect = echoState.testItems.filter(
+        item => item.answeredCorrect === true
+      ).length;
+
+      const slipsCaught = echoState.testItems.filter(
+        item => item.isSlip && item.answeredCorrect === true
+      ).length;
+
+      const accuracy = roundAnswers > 0 ? roundCorrect / roundAnswers : 0;
+
+      echoState.totalCorrect += roundCorrect;
+      echoState.totalAnswers += roundAnswers;
+      echoState.totalSlipsCaught += slipsCaught;
+
+      const roundIndex = echoState.roundIndex;
+      const isLastRound = roundIndex >= ECHO_CONFIG.rounds.length - 1;
+
+      const meta = {
+        reason,
+        elapsed,
+        answers: roundAnswers,
+        correct: roundCorrect,
+        slipsCaught,
+        accuracy,
+      };
+      echoState.roundsMeta[roundIndex] = meta;
+
+      let scoreGain =
+        roundCorrect * ECHO_CONFIG.scorePerCorrect +
+        Math.round(accuracy * ECHO_CONFIG.scorePerCorrect * 2);
+
+      if (accuracy > 0.95) {
+        scoreGain += ECHO_CONFIG.scorePerPerfectRound;
+      } else if (accuracy > 0.8) {
+        scoreGain += Math.round(ECHO_CONFIG.scorePerPerfectRound * 0.4);
+      }
+
+      echoState.mindScore += scoreGain;
+      updateMindScoreLabel();
+
+      applyDifficultyAdjustments();
+
+      if (!isLastRound) {
+        speakRoundVoice(meta);
+        showRoundSummaryOverlay(roundIndex);
+        updateRoundDots();
+        setPhase(PHASE.BETWEEN_ROUNDS);
+      } else {
+        setPhase(PHASE.DONE);
+        recordSessionToHistory();
+        updateDailyIndexLabel();
+        updateResilienceBars();
+        updateSessionLog();
+        updateRoundDots();
+        showSessionSummaryOverlay();
+      }
+    }
+
+    function generateSequence(len) {
+      const seq = [];
+      for (let i = 0; i < len; i++) {
+        const base = pickRandom(SYMBOL_POOL);
+        const color = pickRandom(SYMBOL_COLORS);
+        seq.push({
+          char: base.char,
+          name: base.name,
+          color,
+          index: i,
+        });
+      }
+      return seq;
+    }
+
+    function playSequence(onComplete) {
+      const seq = echoState.sequence;
+      if (!seq || !seq.length) {
+        onComplete && onComplete();
+        return;
+      }
+
+      let idx = 0;
+
+      function showNext() {
+        if (idx >= seq.length) {
+          dom.symbolDisplay.classList.add("fade-out");
+          setTimeout(() => {
+            onComplete && onComplete();
+          }, ECHO_CONFIG.sequenceGapMs);
+          return;
+        }
+
+        const symbol = seq[idx];
+        showSymbol(symbol);
+
+        setTimeout(() => {
+          dom.symbolDisplay.classList.add("fade-out");
+          setTimeout(() => {
+            dom.symbolDisplay.classList.remove("fade-out");
+            idx += 1;
+            showNext();
+          }, ECHO_CONFIG.sequenceGapMs);
+        }, ECHO_CONFIG.sequenceShowMs);
+      }
+
+      showNext();
+    }
+
+    function getEffectiveDifficulty() {
+      if (echoState.hardMode) {
+        return ECHO_CONFIG.difficultyMax;
+      }
+      return echoState.difficultyLevel;
+    }
+
+    function getDistortionProfile() {
+      const d = getEffectiveDifficulty();
+
+      let exactProb = 0.55;
+      let colorSlipProb = 0.2;
+      let symbolSlipProb = 0.15;
+      let fullSlipProb = 0.1;
+
+      const factor = (d - 1) / (ECHO_CONFIG.difficultyMax - 1 || 1);
+      exactProb -= factor * 0.15;
+      fullSlipProb += factor * 0.08;
+      colorSlipProb += factor * 0.04;
+      symbolSlipProb += factor * 0.03;
+
+      const total =
+        exactProb + colorSlipProb + symbolSlipProb + fullSlipProb;
+      if (total <= 0) {
+        return {
+          exact: 0.55,
+          color: 0.2,
+          symbol: 0.15,
+          full: 0.1,
+        };
+      }
+
+      return {
+        exact: exactProb / total,
+        color: colorSlipProb / total,
+        symbol: symbolSlipProb / total,
+        full: fullSlipProb / total,
+      };
+    }
+
+    function buildTestItems(sequence) {
+      const items = [];
+      const prof = getDistortionProfile();
+
+      sequence.forEach(base => {
+        const r = Math.random();
+        let isSlip = false;
+        let symbol = { ...base };
+
+        if (r < prof.exact) {
+          isSlip = false;
+        } else if (r < prof.exact + prof.color) {
+          isSlip = true;
+          symbol.color = pickRandomDifferent(SYMBOL_COLORS, base.color);
+        } else if (r < prof.exact + prof.color + prof.symbol) {
+          isSlip = true;
+          const newSymbol = pickRandomDifferentChar(base.char);
+          symbol.char = newSymbol.char;
+          symbol.name = newSymbol.name;
+        } else {
+          isSlip = true;
+          const newSymbol = pickRandom(SYMBOL_POOL);
+          symbol.char = newSymbol.char;
+          symbol.name = newSymbol.name;
+          symbol.color = pickRandom(SYMBOL_COLORS);
+        }
+
+        items.push({
+          base,
+          shown: symbol,
+          isSlip,
+          isExact: !isSlip,
+          answered: false,
+          answeredCorrect: false,
+        });
+      });
+
+      shuffleInPlace(items);
+      return items;
+    }
+
+    function showCurrentTestItem() {
+      const idx = echoState.testIndex;
+      const items = echoState.testItems;
+      if (!items || idx >= items.length) {
+        endRound("all_items_answered");
+        return;
+      }
+
+      const current = items[idx];
+      showSymbol(current.shown);
+    }
+
+    function handleAnswer(userThinksTrue) {
+      if (echoState.phase !== PHASE.TEST || echoState.paused) return;
+
+      const items = echoState.testItems;
+      const idx = echoState.testIndex;
+      if (!items || idx >= items.length) return;
+
+      const item = items[idx];
+
+      const correctAnswerIsTrue = item.isExact;
+      const isCorrect =
+        (userThinksTrue && correctAnswerIsTrue) ||
+        (!userThinksTrue && !correctAnswerIsTrue);
+
+      item.answered = true;
+      item.answeredCorrect = isCorrect;
+
+      if (isCorrect) {
+        echoState.stability = Math.min(
+          ECHO_CONFIG.stabilityMax,
+          echoState.stability + ECHO_CONFIG.stabilityGainCorrect
+        );
+        playBeep("correct");
+      } else {
+        echoState.stability = Math.max(
+          0,
+          echoState.stability - ECHO_CONFIG.stabilityPenaltyWrong
+        );
+        playBeep("wrong");
+        speakMissFeedback();
+      }
+
+      updateStabilityVisual();
+
+      echoState.testIndex += 1;
+
+      if (echoState.stability <= 0) {
+        endRound("stability_depleted");
+        return;
+      }
+
+      if (echoState.testIndex >= items.length) {
+        endRound("all_items_answered");
+        return;
+      }
+
+      showCurrentTestItem();
+    }
+
+    function getCurrentStabilityDrainPerSecond() {
+      const d = getEffectiveDifficulty();
+      const factor = 1 + (d - 1) * 0.15;
+      return ECHO_CONFIG.baseStabilityDrainPerSecond * factor;
+    }
+
+    function startStabilityTimer() {
+      clearStabilityTimer();
+      echoState.lastStabilityTickTs = performance.now();
+      echoState.stabilityTimerId = requestAnimationFrame(stabilityTick);
+    }
+
+    function stabilityTick(timestamp) {
+      if (echoState.phase !== PHASE.TEST) {
+        clearStabilityTimer();
+        return;
+      }
+
+      const lastTs = echoState.lastStabilityTickTs || timestamp;
+      const deltaMs = timestamp - lastTs;
+      echoState.lastStabilityTickTs = timestamp;
+
+      const drainPerSecond = getCurrentStabilityDrainPerSecond();
+      const drainAmount = (drainPerSecond * deltaMs) / 1000;
+      echoState.stability = Math.max(
+        0,
+        echoState.stability - drainAmount
+      );
+
+      updateStabilityVisual();
+
+      const elapsed = timestamp - (echoState.roundStartTs || timestamp);
+      updateTimer(elapsed);
+
+      if (echoState.stability <= 0) {
+        endRound("stability_depleted");
+        return;
+      }
+
+      echoState.stabilityTimerId = requestAnimationFrame(stabilityTick);
+    }
+
+    function clearStabilityTimer() {
+      if (echoState.stabilityTimerId != null) {
+        cancelAnimationFrame(echoState.stabilityTimerId);
+        echoState.stabilityTimerId = null;
+      }
+    }
+
+    function applyDifficultyAdjustments() {
+      if (echoState.hardMode) {
+        return;
+      }
+
+      const windowRounds = ECHO_CONFIG.difficultyWindowRounds;
+      const meta = echoState.roundsMeta;
+      const recent = meta.slice(-windowRounds);
+
+      if (!recent.length) return;
+
+      let correct = 0;
+      let total = 0;
+
+      recent.forEach(r => {
+        correct += r.correct;
+        total += r.answers;
+      });
+
+      const acc = total > 0 ? correct / total : 0;
+
+      if (acc > ECHO_CONFIG.difficultyUpThreshold) {
+        echoState.difficultyLevel = clamp(
+          echoState.difficultyLevel + 1,
+          ECHO_CONFIG.difficultyMin,
+          ECHO_CONFIG.difficultyMax
+        );
+      } else if (acc < ECHO_CONFIG.difficultyDownThreshold) {
+        echoState.difficultyLevel = clamp(
+          echoState.difficultyLevel - 1,
+          ECHO_CONFIG.difficultyMin,
+          ECHO_CONFIG.difficultyMax
+        );
+      }
+
+      saveDifficulty();
+    }
+
+    function showRoundSummaryOverlay(roundIndex) {
+      const meta = echoState.roundsMeta[roundIndex];
+      if (!meta) return;
+
+      const cfg = ECHO_CONFIG.rounds[roundIndex];
+      dom.overlayTitle.textContent = `Round ${roundIndex + 1}: ${
+        cfg ? cfg.label : "Echo"
+      }`;
+
+      let bodyText = "";
+      switch (meta.reason) {
+        case "stability_depleted":
+          bodyText =
+            "Your echo slipped out of range. That still counts as training.";
+          break;
+        case "all_items_answered":
+          bodyText = "You rode the full sequence of echoes. Nice control.";
+          break;
+        default:
+          bodyText =
+            "Round wrapped up. You can continue or call it for now.";
+      }
+      dom.overlayBody.textContent = bodyText;
+
+      const accuracyPct = meta.accuracy * 100;
+
+      dom.ovCorrect.textContent = `${meta.correct} / ${meta.answers}`;
+      dom.ovSlips.textContent = String(meta.slipsCaught);
+      dom.ovAccuracy.textContent = accuracyPct.toFixed(0) + "%";
+      dom.ovTime.textContent = (meta.elapsed / 1000).toFixed(1) + "s";
+
+      dom.overlayBtn.textContent =
+        roundIndex < ECHO_CONFIG.rounds.length - 1
+          ? "Continue to next echo"
+          : "View session summary";
+
+      dom.overlay.classList.add("visible");
+    }
+
+    function showSessionSummaryOverlay() {
+      const answers = echoState.totalAnswers || 1;
+      const accuracy = echoState.totalCorrect / answers;
+      const totalTimeMs =
+        (performance.now() - (echoState.totalStartTs || performance.now()));
+
+      dom.overlayTitle.textContent = "Session complete";
+
+      let bodyText = "";
+      if (accuracy > 0.9) {
+        bodyText =
+          "Strong echo stability. Micro sessions like this are paying off.";
+      } else if (accuracy > 0.7) {
+        bodyText =
+          "Good control with room to grow. These small drills add up.";
+      } else {
+        bodyText =
+          "This pattern drill is tricky by design. Just showing up trains the system.";
+      }
+      dom.overlayBody.textContent = bodyText;
+
+      dom.ovCorrect.textContent =
+        echoState.totalCorrect + " / " + echoState.totalAnswers;
+      dom.ovSlips.textContent = String(echoState.totalSlipsCaught);
+      dom.ovAccuracy.textContent =
+        (accuracy * 100).toFixed(0) + "%";
+      dom.ovTime.textContent = (totalTimeMs / 1000).toFixed(1) + "s";
+
+      dom.overlayBtn.textContent = "Close";
+      dom.overlay.classList.add("visible");
+
+      speakSessionSummary(accuracy);
+    }
+
+    function handleOverlayButton() {
+      dom.overlay.classList.remove("visible");
+      if (echoState.phase === PHASE.BETWEEN_ROUNDS) {
+        continueToNextRound();
+      }
+    }
+
+    function getTodayIso() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function recordSessionToHistory() {
+  const today = getTodayIso();
+  const totalAnswers = echoState.totalAnswers;
+  const totalCorrect = echoState.totalCorrect;
+  const mindScore = echoState.mindScore;
+
+  if (!totalAnswers) return;
+
+  let entry = echoState.historyByDate[today];
+
+  if (!entry) {
+    // Fresh day entry
+    entry = {
+      sessions: 0,
+      totalAnswers: 0,
+      totalCorrect: 0,
+      totalScore: 0,
+      sessionsList: [],   // new list
+    };
+  } else {
+    // Upgrade older entries that don't have sessionsList yet
+    if (typeof entry.sessions !== "number") entry.sessions = entry.sessions || 0;
+    if (typeof entry.totalAnswers !== "number") entry.totalAnswers = entry.totalAnswers || 0;
+    if (typeof entry.totalCorrect !== "number") entry.totalCorrect = entry.totalCorrect || 0;
+    if (typeof entry.totalScore !== "number") entry.totalScore = entry.totalScore || 0;
+    if (!Array.isArray(entry.sessionsList)) entry.sessionsList = [];
+  }
+
+  entry.sessions += 1;
+  entry.totalAnswers += totalAnswers;
+  entry.totalCorrect += totalCorrect;
+  entry.totalScore += mindScore;
+
+  const sessionRecord = {
+    ts: Date.now(),
+    sessionId: echoState.sessionId,
+    answers: totalAnswers,
+    correct: totalCorrect,
+    slips: echoState.totalSlipsCaught,
+    mindScore: mindScore,
+  };
+
+  entry.sessionsList.push(sessionRecord);
+
+  // Keep last 10 sessions for that day
+  if (entry.sessionsList.length > 10) {
+    entry.sessionsList = entry.sessionsList.slice(-10);
+  }
+
+  echoState.historyByDate[today] = entry;
+  saveHistory();
+  updateSessionLog();
+}
+
+
+    
+
+    function updateResilienceBars() {
+      const bars = dom.resilienceBars.querySelectorAll(".echo-resilience-bar");
+      if (!bars.length) return;
+
+      const today = getTodayIso();
+      const todayDate = new Date(today + "T00:00:00");
+
+      const points = [];
+
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(todayDate.getTime() - i * 86400000);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        const key = `${y}-${m}-${d}`;
+        const entry = echoState.historyByDate[key];
+
+        let value = 0;
+        if (entry && entry.totalAnswers > 0) {
+          const acc = entry.totalCorrect / entry.totalAnswers;
+          value = Math.round(acc * 100);
+        }
+
+        points.push({ key, value });
+      }
+
+      const maxValue = points.reduce((max, p) => Math.max(max, p.value), 0);
+
+      points.forEach((p, idx) => {
+        const bar = bars[idx];
+        if (!bar) return;
+
+        const fill = bar.querySelector(".echo-resilience-bar-fill");
+        bar.classList.remove("today", "empty");
+
+        if (p.key === today) {
+          bar.classList.add("today");
+        }
+
+        if (p.value <= 0) {
+          bar.classList.add("empty");
+          if (fill) fill.style.height = "4%";
+        } else {
+          const norm =
+            maxValue > 0 ? p.value / maxValue : 0.1;
+          const pct = 10 + norm * 80;
+          if (fill) fill.style.height = pct.toFixed(0) + "%";
+        }
+      });
+
+      const todayEntry = echoState.historyByDate[today];
+      let labelText = "today 0%";
+      if (todayEntry && todayEntry.totalAnswers > 0) {
+        const avgAcc =
+          todayEntry.totalCorrect / todayEntry.totalAnswers;
+        labelText = `today ${Math.round(avgAcc * 100)}%`;
+      }
+      dom.resilienceLabel.textContent = labelText;
+    }
+
+
+    function updateSessionLog() {
+  if (!dom.sessionLog) return;
+
+  const allSessions = [];
+
+  for (const [dateKey, entry] of Object.entries(echoState.historyByDate)) {
+    if (!entry || !entry.sessionsList) continue;
+    entry.sessionsList.forEach(s => {
+      allSessions.push({
+        date: dateKey,
+        ts: s.ts || Date.now(),
+        sessionId: s.sessionId || 0,
+        answers: s.answers || 0,
+        correct: s.correct || 0,
+        slips: s.slips || 0,
+        mindScore: s.mindScore || 0,
+      });
+    });
+  }
+
+  if (!allSessions.length) {
+    dom.sessionLog.textContent = "No stored sessions yet.";
+    return;
+  }
+
+  // sort newest first
+  allSessions.sort((a, b) => b.ts - a.ts);
+
+  // keep last 5 only
+  const recent = allSessions.slice(0, 5);
+
+  const fragments = recent.map(s => {
+    const acc = s.answers > 0 ? Math.round((s.correct / s.answers) * 100) : 0;
+    const id = String(s.sessionId).padStart(4, "0");
+    return `<div class="echo-session-log-entry">#${id} . ${s.date} . ${acc}% acc . slips ${s.slips}</div>`;
+  });
+
+  dom.sessionLog.innerHTML = fragments.join("");
+}
+
+    function ensureAudioContext() {
+      if (!echoState.soundEnabled) return null;
+      if (audioContext) return audioContext;
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        audioContext = null;
+      }
+      return audioContext;
+    }
+
+    function playBeep(type) {
+      const ctx = ensureAudioContext();
+      if (!ctx) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      let freq = 600;
+      let duration = 0.09;
+
+      if (type === "correct") {
+        freq = 720;
+        duration = 0.09;
+      } else if (type === "wrong") {
+        freq = 360;
+        duration = 0.13;
+      }
+
+      osc.frequency.value = freq;
+      gain.gain.value = 0.15;
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      const now = ctx.currentTime;
+      osc.start(now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function speakLine(text, rate = 1, pitch = 1, volume = 0.9) {
+      if (!echoState.voiceEnabled) return;
+      if (!("speechSynthesis" in window)) return;
+
+      try {
+        const synth = window.speechSynthesis;
+        const utter = new SpeechSynthesisUtterance(text);
+
+        const voices = synth.getVoices() || [];
+        const enVoice =
+          voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en")) ||
+          voices[0];
+
+        if (enVoice) utter.voice = enVoice;
+        utter.rate = rate;
+        utter.pitch = pitch;
+        utter.volume = volume;
+
+        synth.cancel();
+        synth.speak(utter);
+      } catch (e) {
+        console.log("speakLine error:", e);
+      }
+    }
+
+    function speakMissFeedback() {
+      if (!echoState.voiceEnabled) return;
+      if (Math.random() < 0.4) return;
+
+      const lines = [
+        "Slip detected. Focus.",
+        "You blinked on that one.",
+        "That echo drifted off target.",
+        "Missed. Recover and continue.",
+        "Pattern break. Pull it back.",
+      ];
+
+      const line = lines[Math.floor(Math.random() * lines.length)];
+      speakLine(line, 1, 1, 0.85);
+    }
+
+    function speakRoundVoice(meta) {
+      if (!echoState.voiceEnabled) return;
+      const acc = meta.answers > 0 ? meta.correct / meta.answers : 0;
+
+      let line = "";
+      if (acc > 0.9) {
+        line = "Strong round. Echo is steady.";
+      } else if (acc > 0.7) {
+        line = "Decent round. Still room to tighten.";
+      } else {
+        line = "Rough round. This drill is built to be hard.";
+      }
+
+      speakLine(line, 1, 1, 0.85);
+    }
+
+    function speakSessionSummary(accuracy) {
+      if (!echoState.voiceEnabled) return;
+      if (!("speechSynthesis" in window)) return;
+
+      let line = "";
+      if (accuracy > 0.9) {
+        line = "Echo stable. Memory integrity is strong.";
+      } else if (accuracy > 0.7) {
+        line = "Good control. Train again later and we keep sharpening.";
+      } else {
+        line = "This pattern drill is tough by design. Keep showing up.";
+      }
+
+      speakLine(line, 1, 1, 0.9);
+    }
+
+    function handleToggleSound() {
+      echoState.soundEnabled = !echoState.soundEnabled;
+      updateToggleVisuals();
+      saveToggles();
+      if (echoState.soundEnabled) {
+        playBeep("correct");
+      }
+    }
+
+    function handleToggleVoice() {
+      echoState.voiceEnabled = !echoState.voiceEnabled;
+      updateToggleVisuals();
+      saveToggles();
+    }
+
+    function handleToggleHard() {
+      echoState.hardMode = !echoState.hardMode;
+      updateToggleVisuals();
+      saveToggles();
+    }
+
+    function handleToggleSize() {
+  echoState.sizeDistort = !echoState.sizeDistort;
+  updateToggleVisuals();
+
+  // Optional: when turning off, snap back to default size
+  if (!echoState.sizeDistort) {
+    dom.symbolDisplay.style.fontSize = "";
+  }
+}
+
+
+    function pickRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function pickRandomDifferent(arr, current) {
+      if (arr.length < 2) return pickRandom(arr);
+      let chosen = current;
+      let guard = 0;
+      while (chosen === current && guard < 10) {
+        chosen = pickRandom(arr);
+        guard++;
+      }
+      return chosen;
+    }
+
+    function pickRandomDifferentChar(currentChar) {
+      const candidates = SYMBOL_POOL.filter(s => s.char !== currentChar);
+      if (!candidates.length) return pickRandom(SYMBOL_POOL);
+      return pickRandom(candidates);
+    }
+
+    function shuffleInPlace(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    initEchoSlip();
+  </script>
+</body>
+</html>
