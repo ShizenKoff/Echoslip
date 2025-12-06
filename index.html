@@ -539,6 +539,22 @@
               background 0.1s ease, color 0.1s ease, transform 0.06s ease;
 }
 
+.echo-phase-label {
+  text-align: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.echo-phase-label.mem {
+  color: var(--accent-mint);
+}
+.echo-phase-label.recall {
+  color: var(--accent-lilac);
+}
+
+
 
     
 
@@ -555,6 +571,73 @@
 
 .echo-session-log-entry {
   white-space: nowrap;
+}
+
+
+.echo-help-link {
+  margin: 0 auto;
+  margin-top: 2px;
+  background: none;
+  border: none;
+  color: var(--accent-mint);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.echo-help-link:hover {
+  opacity: 1;
+}
+
+.echo-help-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #1b1024ee, #070309f5);
+  backdrop-filter: blur(4px);
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.echo-help-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.echo-help-card {
+  width: 100%;
+  max-width: 360px;
+  border-radius: 16px;
+  border: 1px solid rgba(181, 255, 246, 0.6);
+  background: radial-gradient(circle at top, #261633, #120816);
+  padding: 14px 12px 12px;
+  text-align: left;
+  box-shadow: var(--border-glow);
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
+
+.echo-help-title {
+  text-align: center;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent-mint);
+  margin-bottom: 6px;
+}
+
+.echo-help-body p {
+  margin: 4px 0 6px;
+  line-height: 1.45;
+}
+.echo-help-body strong {
+  color: var(--accent-lilac);
 }
 
   </style>
@@ -574,9 +657,12 @@
     </header>
 
     <main class="echo-main">
-      <div class="echo-sequence-window">
-        <div class="echo-symbol" id="echo-symbol-display">◎</div>
-      </div>
+  <div class="echo-phase-label" id="echo-phase-label">Ready</div>
+
+  <div class="echo-sequence-window">
+    <div class="echo-symbol" id="echo-symbol-display">◎</div>
+  </div>
+
 
       <div class="echo-status-text" id="echo-status-text">
         Tap "Start session" to begin. Watch the sequence, then judge each echo.
@@ -663,28 +749,66 @@
       <div class="echo-footer-meta">
         Crafted by CAR-NOVA.i for five minute memory drills
       </div>
+
+      <button class="echo-help-link" id="echo-help-link" type="button">
+        How to play
+      </button>
+
     </footer>
 
     <div class="echo-overlay" id="echo-overlay">
-      <div class="echo-overlay-card">
-        <div class="echo-overlay-title" id="overlay-title">
-          Round summary
-        </div>
-        <div class="echo-overlay-body" id="overlay-body">
-          Good work. Your echo held longer than expected.
-        </div>
-        <div class="echo-overlay-metrics" id="overlay-metrics">
-          <div><span class="key">Correct:</span> <span id="ov-correct">0</span></div>
-          <div><span class="key">Slips caught:</span> <span id="ov-slips">0</span></div>
-          <div><span class="key">Accuracy:</span> <span id="ov-accuracy">0%</span></div>
-          <div><span class="key">Round time:</span> <span id="ov-time">0.0s</span></div>
-        </div>
-        <button class="echo-btn echo-btn-main" id="overlay-btn" type="button">
-          Continue
-        </button>
-      </div>
+  <div class="echo-overlay-card">
+    <div class="echo-overlay-title" id="overlay-title">
+      Round summary
     </div>
+    <div class="echo-overlay-body" id="overlay-body">
+      Good work. Your echo held longer than expected.
+    </div>
+    <div class="echo-overlay-metrics" id="overlay-metrics">
+      <div><span class="key">Correct:</span> <span id="ov-correct">0</span></div>
+      <div><span class="key">Slips caught:</span> <span id="ov-slips">0</span></div>
+      <div><span class="key">Accuracy:</span> <span id="ov-accuracy">0%</span></div>
+      <div><span class="key">Round time:</span> <span id="ov-time">0.0s</span></div>
+    </div>
+    <button class="echo-btn echo-btn-main" id="overlay-btn" type="button">
+      Continue
+    </button>
   </div>
+</div> <!-- ✅ CLOSES SUMMARY OVERLAY -->
+
+
+<!-- ✅ NOW INSERT THE HELP OVERLAY AS ITS OWN SIBLING -->
+<div class="echo-help-overlay" id="echo-help-overlay">
+  <div class="echo-help-card">
+    <div class="echo-help-title">How to play EchoSlip</div>
+    <div class="echo-help-body">
+      <p><strong>1. Memorize</strong><br>
+      Watch each glowing symbol in order while the label shows MEMORIZE.</p>
+
+      <p><strong>2. Recall</strong><br>
+      During RECALL, judge each new symbol: is it exactly the same as the one you saw in that position?</p>
+
+      <p><strong>3. Answer</strong><br>
+      Tap <strong>TRUE</strong> if it matches, <strong>SLIP</strong> if anything changed (shape or color).</p>
+
+      <p><strong>4. Stability</strong><br>
+      Your stability bar drains over time and on mistakes. Correct answers restore some stability.</p>
+
+      <p><strong>Micro sessions</strong><br>
+      One quick run is a five-minute pattern drill. Come back later for another echo.</p>
+    </div>
+    <button class="echo-btn echo-btn-main echo-help-close" id="echo-help-close" type="button">
+      Got it
+    </button>
+    <button class="echo-help-link" id="echo-help-link" type="button">
+  How to play
+</button>
+
+  </div>
+</div>
+
+</div> <!-- closes echo-shell -->
+
 
   <script>
     const ECHO_CONFIG = {
@@ -799,36 +923,64 @@
       toggleHard: document.getElementById("toggle-hard"),
       toggleSize: document.getElementById("toggle-size"),
       sessionLog: document.getElementById("echo-session-log"),
+      phaseLabel: document.getElementById("echo-phase-label"),
+      helpOverlay: document.getElementById("echo-help-overlay"),
+      helpLink: document.getElementById("echo-help-link"),
+      helpClose: document.getElementById("echo-help-close"),
+
+
 
     };
 
     function initEchoSlip() {
-      loadPersistentState();
-      buildRoundDots();
-      buildResilienceBarsSkeleton();
+  loadPersistentState();
+  buildRoundDots();
+  buildResilienceBarsSkeleton();
 
-      dom.btnTrue.addEventListener("click", () => handleAnswer(true));
-      dom.btnSlip.addEventListener("click", () => handleAnswer(false));
-      dom.btnMain.addEventListener("click", handleMainButton);
-      dom.overlayBtn.addEventListener("click", handleOverlayButton);
+  dom.btnTrue.addEventListener("click", () => handleAnswer(true));
+  dom.btnSlip.addEventListener("click", () => handleAnswer(false));
+  dom.btnMain.addEventListener("click", handleMainButton);
+  dom.overlayBtn.addEventListener("click", handleOverlayButton);
 
-      dom.toggleSound.addEventListener("click", handleToggleSound);
-      dom.toggleVoice.addEventListener("click", handleToggleVoice);
-      dom.toggleHard.addEventListener("click", handleToggleHard);
-      dom.toggleSize.addEventListener("click", handleToggleSize);
+  dom.toggleSound.addEventListener("click", handleToggleSound);
+  dom.toggleVoice.addEventListener("click", handleToggleVoice);
+  dom.toggleHard.addEventListener("click", handleToggleHard);
+  dom.toggleSize.addEventListener("click", handleToggleSize);
 
-      updateSessionLabel();
-      updateMindScoreLabel();
-      updateDailyIndexLabel();
-      updateStabilityVisual();
-      updateTimer(0);
-      updateRoundDots();
-      updateResilienceBars();
-      updateToggleVisuals();
+  // How-to overlay hooks
+  if (dom.helpLink && dom.helpOverlay && dom.helpClose) {
+    dom.helpLink.addEventListener("click", openHelpOverlay);
+    dom.helpClose.addEventListener("click", closeHelpOverlay);
+    dom.helpOverlay.addEventListener("click", (e) => {
+      if (e.target === dom.helpOverlay) {
+        closeHelpOverlay();
+      }
+    });
+  }
 
-      setPhase(PHASE.IDLE);
-      echoState.totalStartTs = performance.now();
-    }
+  updateSessionLabel();
+  updateMindScoreLabel();
+  updateDailyIndexLabel();
+  updateStabilityVisual();
+  updateTimer(0);
+  updateRoundDots();
+  updateResilienceBars();
+  updateToggleVisuals();
+
+  setPhase(PHASE.IDLE);
+  echoState.totalStartTs = performance.now();
+}
+
+function openHelpOverlay() {
+  if (!dom.helpOverlay) return;
+  dom.helpOverlay.classList.add("visible");
+}
+
+function closeHelpOverlay() {
+  if (!dom.helpOverlay) return;
+  dom.helpOverlay.classList.remove("visible");
+}
+
 
     function loadPersistentState() {
       try {
@@ -953,47 +1105,68 @@
     }
 
     function setPhase(nextPhase) {
-        echoState.paused = false;
-        echoState.phase = nextPhase;
-      
+  echoState.paused = false;
+  echoState.phase = nextPhase;
 
-      switch (nextPhase) {
-        case PHASE.IDLE:
-          setStatus("Tap \"Start session\" then watch the pattern carefully.");
-          setMainButtonLabel("Start session");
-          setAnswerButtonsEnabled(false);
-          setMainButtonEnabled(true);
-          break;
-        case PHASE.SHOW_SEQUENCE:
-          setStatus("Observe each symbol and color in order.");
-          setMainButtonLabel("Sequence running");
-          setMainButtonEnabled(false);
-          setAnswerButtonsEnabled(false);
-          break;
-        case PHASE.TEST:
-          setStatus("Judge each echo. True for exact match, Slip for any change.");
-          setMainButtonLabel("Pause");
-          setMainButtonEnabled(true);
-          setAnswerButtonsEnabled(true);
-          break;
-        case PHASE.BETWEEN_ROUNDS:
-          setStatus("Round complete. Continue or wrap up.");
-          setMainButtonLabel("Continue to next round");
-          setMainButtonEnabled(true);
-          setAnswerButtonsEnabled(false);
-          break;
-        case PHASE.DONE:
-          setStatus("Session complete. Start again when you are ready.");
-          setMainButtonLabel("Run another session");
-          setMainButtonEnabled(true);
-          setAnswerButtonsEnabled(false);
-          break;
-      }
-    }
+  switch (nextPhase) {
+    case PHASE.IDLE:
+      setStatus("Tap \"Start session\" then watch the pattern carefully.");
+      setPhaseLabelText("Ready");
+      setMainButtonLabel("Start session");
+      setAnswerButtonsEnabled(false);
+      setMainButtonEnabled(true);
+      break;
+
+    case PHASE.SHOW_SEQUENCE:
+      setStatus("Observe each symbol and color in order.");
+      setPhaseLabelText("Memorize", "mem");
+      setMainButtonLabel("Sequence running");
+      setMainButtonEnabled(false);
+      setAnswerButtonsEnabled(false);
+      break;
+
+    case PHASE.TEST:
+      setStatus("Judge each echo. True for exact match, Slip for any change.");
+      setPhaseLabelText("Recall", "recall");
+      setMainButtonLabel("Pause");
+      setMainButtonEnabled(true);
+      setAnswerButtonsEnabled(true);
+      break;
+
+    case PHASE.BETWEEN_ROUNDS:
+      setStatus("Round complete. Continue or wrap up.");
+      setPhaseLabelText("Paused");
+      setMainButtonLabel("Continue to next round");
+      setMainButtonEnabled(true);
+      setAnswerButtonsEnabled(false);
+      break;
+
+    case PHASE.DONE:
+      setStatus("Session complete. Start again when you are ready.");
+      setPhaseLabelText("Complete");
+      setMainButtonLabel("Run another session");
+      setMainButtonEnabled(true);
+      setAnswerButtonsEnabled(false);
+      break;
+  }
+}
+
 
     function setStatus(message) {
       dom.statusText.textContent = message;
     }
+
+
+    function setPhaseLabelText(text, modeClass) {
+  if (!dom.phaseLabel) return;
+  dom.phaseLabel.textContent = text;
+
+  dom.phaseLabel.classList.remove("mem", "recall");
+  if (modeClass) {
+    dom.phaseLabel.classList.add(modeClass);
+  }
+}
+
 
     function setMainButtonLabel(label) {
       dom.btnMain.textContent = label;
