@@ -41,7 +41,7 @@
 
     .echo-shell {
       width: 100%;
-      max-width: 520px;
+      max-width: 460px;
       background: radial-gradient(circle at bottom, #20132b, #120918);
       border-radius: 18px;
       border: 1px solid rgba(181, 255, 246, 0.3);
@@ -490,24 +490,49 @@
       display: none !important;
     }
 
-    @media (max-width: 480px) {
-      .echo-title {
-        font-size: 1rem;
-      }
-      .echo-subtitle {
-        font-size: 0.68rem;
-      }
-      .echo-symbol {
-        font-size: 2.2rem;
-      }
-      .echo-btn {
-        font-size: 0.8rem;
-      }
-      .echo-toggle-btn {
-        font-size: 0.62rem;
-      }
-    }
+    /* Core fix for mobile sizing */
+.echo-shell {
+  width: 100%;
+  max-width: 460px;     /* was 520px */
+  margin: 0 auto;
+}
 
+/* Mobile tuning */
+@media (max-width: 600px) {
+  .echo-shell {
+    max-width: 100%;
+    padding: 18px 16px 16px;
+  }
+
+  .echo-title-block h1 {
+    font-size: 1.3rem;
+  }
+
+  .echo-title-block h2 {
+    font-size: 0.85rem;
+  }
+
+  .echo-symbol {
+    font-size: 3.4rem !important;     /* fixes tiny symbol */
+  }
+
+  .echo-stability-bar {
+    height: 14px;
+  }
+
+  .echo-btn-main {
+    font-size: 1.15rem;
+    padding: 14px;
+  }
+
+  .echo-toggle-btn {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+}
+
+
+    
 
     .echo-session-log {
   margin-top: 4px;
